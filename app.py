@@ -16,7 +16,7 @@ def create_app(test_config=None):
     app.config['SECRET_KEY'] = SECRET_KEY
 
     """ uncomment at the first time running the app """
-    db_drop_and_create_all()
+    # db_drop_and_create_all()
 
     @app.route('/', methods=['GET'])
     def home():
@@ -24,6 +24,16 @@ def create_app(test_config=None):
             'map.html', 
             map_key=os.getenv('GOOGLE_MAPS_API_KEY', 'GOOGLE_MAPS_API_KEY_WAS_NOT_SET?!')
         )
+
+    @app.route('/detail', methods=['GET'])
+    def detail():
+        location_id = float(request.args.get('id'))
+        item = SampleLocation.query.get(location_id)
+        return render_template(
+            'detail.html', 
+            item=item,
+            map_key=os.getenv('GOOGLE_MAPS_API_KEY', 'GOOGLE_MAPS_API_KEY_WAS_NOT_SET?!')
+        )            
 
     @app.route("/new-location", methods=['GET', 'POST'])
     def new_location():
